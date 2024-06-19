@@ -1,0 +1,44 @@
+Predicting Air Quality Index (AQI)
+
+Develop and train a MLM to predict AQI based on environmental factors such as 
+temp, humidity, wind speed, pollutant levels PM2.5, CO2, O3, etc
+
+Steps Overview:
+1. Data collection: source AQI data from EPA, NOAA, Kaggle
+    Ensure dta covers multiple locations and time periods. 
+    Define the scope.
+
+2. Data processessing: clean the data
+
+3. Use visualizations to explore relationships between AQI and different
+    environmental factors with Matplotlib or Seaborn.
+    Identify trends, seasonlity, outliers.
+
+4. Feature engineering: create new features that improve model performance.
+    Lag features, interaction terms.
+    Select important features using techniques like correlation analysis and 
+    feature importance from preliminary models.
+
+5. Model building: split the data into training and testing sets.
+    Train multiple regression models: linear regression, Decision trees, 
+    random forest, gradient boosting.
+    Eval models using metrics such as Mean Absolute Error, Mean Squared Error,
+    and R-squared.
+
+6. Model eval and hyperparameter tuning: use cross-validation to asses model 
+    stability. 
+    tune hyperparameters using grid search or random search to optimize model
+    performance.
+
+7. Model deployment: create a jupyter notebook or a streamlit dashboard to
+    showcase model's predictions.
+    Include visualizations of actual vs. predicted AQI values and model
+    performance metrics.
+
+
+
+Data collection and preprocessing:
+    Data sources: EPA data
+
+    Preprocessing and EDA: 
+
