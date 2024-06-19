@@ -4,6 +4,11 @@ A machine learning program about AQI.
 ## Description
 This project is an implementation of a machine learning model to predict AQI.
 
+## Data Source
+Dataset: Daily AQI from EPA
+Accessed: June 5, 2024
+URL: https://aqs.epa.gov/aqsweb/airdata/download_files.html#AQI
+
 ## Installation
 1. clone the repo: 
 git clone https:....
