@@ -18,6 +18,11 @@ source .venv/bin/activate
 3. install dependencies:
 pip install -r requirements.txt
 
+## Project Data
+
+This repository includes a large CSV files that contain daily temperature and daily AQI data. It is used for ########. The file is managed using Git LFS for efficient version control.
+
+
 ## Usage
 To start the program run the following command:
 python main.py
