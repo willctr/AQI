@@ -61,18 +61,3 @@ if __name__ == "__main__":
 
     file_cleaner = FileCleaner(aqi_directory, temp_directory) #create instance of FileCleaner
     file_cleaner.clean_all_files() # call cleaner functions
-
-# # directory paths
-# aqi_directory = 'data/daily_aqi'
-# temp_directory = 'data/daily_temp'
-
-# # clean AQI files
-# print("Cleaning AQI files...")
-# clean_aqi_files(aqi_directory)
-
-# # clean temperature files
-# print("Cleaning Temperature files...")
-# clean_temp_files(temp_directory)
-
-# print("\nAll files cleaned and saved.")
-
