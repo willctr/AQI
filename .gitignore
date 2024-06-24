@@ -36,3 +36,6 @@ __pycache__/
 # Ignore environment variable files
 .env
 
+
+# Ignore all CSV files in the data folder and its subdirectories
+data/**/*.csv
