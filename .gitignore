@@ -42,3 +42,4 @@ data/**/*.csv
 
 # Ignore project notes
 notes.txt
+Overview.txt
