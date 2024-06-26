@@ -43,3 +43,6 @@ data/**/*.csv
 # Ignore project notes
 notes.txt
 Overview.txt
+
+# Ignore database created
+air.db
