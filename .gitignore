@@ -39,3 +39,6 @@ __pycache__/
 
 # Ignore all CSV files in the data folder and its subdirectories
 data/**/*.csv
+
+# Ignore project notes
+notes.txt
