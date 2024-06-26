@@ -17,7 +17,7 @@ class FileCleaner:
                 output_file = os.path.join(self.aqi_directory, f'cleaned_aqi_{year}.csv') # save in same directory
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["Defining Site"] # specify which columns to drop
+                columns_to_drop = ["Defining Site", "Number of Sites Reporting"] # specify which columns to drop
                 df.drop(columns = columns_to_drop, inplace=True) # modify current df
 
                 df.to_csv(output_file, index = False)
@@ -34,7 +34,7 @@ class FileCleaner:
                 output_file = os.path.join(self.temp_directory, f'cleaned_temp_{year}.csv')
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["Parameter Code", "POC", "Datum", "Parameter Name", 
+                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", 
                                 "Method Code", "Method Name", "Date of Last Change"]
