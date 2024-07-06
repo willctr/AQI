@@ -45,7 +45,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "Address", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 df.to_csv(output_file, index = False)
@@ -65,7 +65,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "Address", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 df.to_csv(output_file, index = False)
@@ -85,7 +85,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "Address", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 df.to_csv(output_file, index = False)
@@ -105,7 +105,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "Address", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 df.to_csv(output_file, index = False)
@@ -126,7 +126,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "Address", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 df.to_csv(output_file, index = False)
@@ -146,7 +146,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "Address", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 df.to_csv(output_file, index = False)
@@ -165,8 +165,8 @@ class FileCleaner:
                 df = pd.read_csv(filepath, low_memory = False)
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
-                                "Event Type", "Observation Count", "Observation Percent",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Event Type", "Observation Count", "Observation Percent", "Address",
+                                "Method Code", "Method Name", "Local Site Name", "Address", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 df.to_csv(output_file, index = False)
