@@ -14,7 +14,22 @@ class FileCleaner:
         self.co_directory = co_directory
 
 
-    # function to clean AQI CSV files
+    # Basic cleaning function to ensure data types are consistent, remove null values, and remove negative values
+    def basic_cleaning(self, df):
+        # Ensure data types are consistent
+        df = df.apply(pd.to_numeric, errors='ignore')
+        
+        # Drop rows with any null values
+        df = df.dropna()
+
+        # Remove negative values
+        num = df.select_dtypes(include=['number'])  # Select numeric columns
+        df[num.columns] = num.applymap(lambda x: x if x >= 0 else 0)
+        
+        return df
+
+
+    # function to clean AQI CSV files, drop columns
     def clean_aqi_files(self):
         for filename in os.listdir(self.aqi_directory):
             if filename.startswith("cleaned_"):
@@ -28,10 +43,13 @@ class FileCleaner:
                 columns_to_drop = ["Defining Site", "Number of Sites Reporting"] # specify which columns to drop
                 df.drop(columns = columns_to_drop, inplace=True) # modify current df
 
+                # Apply basic cleaning
+                df = self.basic_cleaning(df)
+
                 df.to_csv(output_file, index = False)
                 print(f"AQI file '{filename}' cleaned and saved as '{output_file}'. ")
 
-    # function to clean Temperature CSV files
+    # function to clean Temperature CSV files, drop columns
     def clean_temp_files(self):
         for filename in os.listdir(self.temp_directory):
             if filename.startswith("cleaned_"):
@@ -48,10 +66,13 @@ class FileCleaner:
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
+                # Apply basic cleaning
+                df = self.basic_cleaning(df)
+
                 df.to_csv(output_file, index = False)
                 print(f"Temperature file '{filename}' cleaned and saved as '{output_file}'.")
 
-    # function to clean Ozone CSV files
+    # function to clean Ozone CSV files, drop columns
     def clean_ozone_files(self):
         for filename in os.listdir(self.ozone_directory):
             if filename.startswith("cleaned_"):
@@ -68,10 +89,13 @@ class FileCleaner:
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
+                # Apply basic cleaning
+                df = self.basic_cleaning(df)
+
                 df.to_csv(output_file, index = False)
                 print(f"Ozone file '{filename}' cleaned and saved as '{output_file}'.")
     
-    # function to clean pm2.5 CSV files
+    # function to clean pm2.5 CSV files, drop columns
     def clean_pm25_files(self):
         for filename in os.listdir(self.pm25_directory):
             if filename.startswith("cleaned_"):
@@ -88,10 +112,13 @@ class FileCleaner:
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
+                # Apply basic cleaning
+                df = self.basic_cleaning(df)
+
                 df.to_csv(output_file, index = False)
                 print(f"PM2.5 file '{filename}' cleaned and saved as '{output_file}'.")
       
-    # function to clean pm10 CSV files
+    # function to clean pm10 CSV files, drop columns
     def clean_pm10_files(self):
         for filename in os.listdir(self.pm10_directory):
             if filename.startswith("cleaned_"):
@@ -108,11 +135,14 @@ class FileCleaner:
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
+                # Apply basic cleaning
+                df = self.basic_cleaning(df)
+
                 df.to_csv(output_file, index = False)
                 print(f"PM10 file '{filename}' cleaned and saved as '{output_file}'.")
       
 
-    # function to clean NO2 CSV files
+    # function to clean NO2 CSV files, drop columns
     def clean_no2_files(self):
         for filename in os.listdir(self.no2_directory):
             if filename.startswith("cleaned_"):
@@ -129,10 +159,13 @@ class FileCleaner:
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
+                # Apply basic cleaning
+                df = self.basic_cleaning(df)
+
                 df.to_csv(output_file, index = False)
                 print(f"NO2 file '{filename}' cleaned and saved as '{output_file}'.")
     
-    # function to clean SO2 CSV files
+    # function to clean SO2 CSV files, drop columns
     def clean_so2_files(self):
         for filename in os.listdir(self.so2_directory):
             if filename.startswith("cleaned_"):
@@ -149,10 +182,13 @@ class FileCleaner:
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
+                # Apply basic cleaning
+                df = self.basic_cleaning(df)
+
                 df.to_csv(output_file, index = False)
                 print(f"SO2 file '{filename}' cleaned and saved as '{output_file}'.")
     
-    # function to clean CO CSV files
+    # function to clean CO CSV files, drop columns
     def clean_co_files(self):
         for filename in os.listdir(self.co_directory):
             if filename.startswith("cleaned_"):
@@ -168,6 +204,9 @@ class FileCleaner:
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
+
+                # Apply basic cleaning
+                df = self.basic_cleaning(df)
 
                 df.to_csv(output_file, index = False)
                 print(f"CO file '{filename}' cleaned and saved as '{output_file}'.")
@@ -204,6 +243,7 @@ class FileCleaner:
 
 # Usage
 if __name__ == "__main__":
+    # file path
     aqi_directory = 'data/daily_aqi'
     temp_directory = 'data/daily_temp'
     ozone_directory = 'data/daily_ozone'
@@ -213,6 +253,8 @@ if __name__ == "__main__":
     so2_directory = 'data/daily_so2'
     co_directory = 'data/daily_co'
 
+    #create instance of FileCleaner
     file_cleaner = FileCleaner(aqi_directory, temp_directory, ozone_directory, pm25_directory,
-                               pm10_directory, no2_directory, so2_directory, co_directory) #create instance of FileCleaner
-    file_cleaner.clean_all_files() # call cleaner functions
+                               pm10_directory, no2_directory, so2_directory, co_directory)
+    # call cleaner functions
+    file_cleaner.clean_all_files()
