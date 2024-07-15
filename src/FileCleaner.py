@@ -22,9 +22,14 @@ class FileCleaner:
         # Drop rows with any null values
         df = df.dropna()
 
-        # Remove negative values
-        num = df.select_dtypes(include=['number'])  # Select numeric columns
-        df[num.columns] = num.applymap(lambda x: x if x >= 0 else 0)
+        # # Change negative values to 0
+        # num_cols = df.select_dtypes(include=['number']).columns  # Select numeric columns
+        # df[num_cols] = df[num_cols].applymap(lambda x: max(0, x))  # Replace negative values with 0 by using max()
+
+        # Remove rows where Arithmetic Mean is negative
+        if 'Arithmetic Mean' in df.columns:
+            # filter the df with boolean Series, evaluates to true if >= 0, keep rows where true
+            df = df[df['Arithmetic Mean'] >= 0] # df column 'Arithmetic Mean' condition >= 0
         
         return df
 
