@@ -2,6 +2,11 @@ import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np 
+import plotly.express as px 
+import warnings as wr 
+wr.filterwarnings('ignore')
+
 
 class EDA:
     def __init__(self, db_name='air.db'):
@@ -38,6 +43,87 @@ class EDA:
         plt.ylabel('Frequency')
         plt.show()
 
+    # def plot_facet_grid_line(self, df, dataset_name):
+    #     # Ensure 'Date' column is in datetime format
+    #     df['Date'] = pd.to_datetime(df['Date'])
+
+    #     # Create a FacetGrid
+    #     g = sns.FacetGrid(df, col="CBSA", col_wrap=4, height=4, aspect=1.5) 
+
+    #     # which dataset
+    #     if dataset_name == 'AQIdata':
+    #         # Map the lineplot to the FacetGrid
+    #         g.map(sns.lineplot, "Date", "AQI")
+    #         # titles and layout
+    #         g.set_titles(col_template="{col_name}")
+    #         g.set_axis_labels("Date", "AQI")
+    #         plt.subplots_adjust(top=0.9)
+    #         g.figure.suptitle('Time Series of AQI by CBSA Region', fontsize=16)
+    #     else:
+    #         # Map the lineplot to the FacetGrid
+    #         g.map(sns.lineplot, "Date", "Arithmetic Mean")
+    #         # titles and layout
+    #         g.set_titles(col_template="{col_name}")
+    #         g.set_axis_labels("Date", "Arithmetic Mean")
+    #         plt.subplots_adjust(top=0.9)
+    #         g.figure.suptitle('Time Series of Arithmetic Mean by CBSA Region', fontsize=16)
+
+
+    #     # Show plot
+    #     plt.show()
+        
+    def plot_facet_grid_paginated(self, df, dataset_name, regions_per_page=4):
+        # Ensure 'Date' column is in datetime format
+        df['Date'] = pd.to_datetime(df['Date'])
+
+        # Get unique CBSA regions
+        unique_cbsa = df['CBSA'].unique()
+        # Calculate the number of pages
+        num_pages = (len(unique_cbsa) + regions_per_page - 1) // regions_per_page
+
+        # Iterate over each page
+        for i in range(num_pages):
+            # Get the CBSA regions for the current page
+            subset_cbsa = unique_cbsa[i * regions_per_page:(i + 1) * regions_per_page]
+            # Filter the DataFrame to only include rows with the selected CBSA regions
+            subset_df = df[df['CBSA'].isin(subset_cbsa)]
+
+            # Create a FacetGrid for the subset
+            g = sns.FacetGrid(subset_df, col="CBSA", col_wrap=4, height=4, aspect=1.5)
+
+            if dataset_name == 'AQIdata':
+                # Map the lineplot to the FacetGrid
+                g.map(sns.lineplot, "Date", "AQI")
+                # Set axis labels and titles
+                g.set_axis_labels("Date", "AQI")
+                plt.subplots_adjust(top=0.9)
+                g.figure.suptitle(f'Time Series of AQI by CBSA Region (Page {i+1})', fontsize=16)
+            else:
+                # Map the lineplot to the FacetGrid
+                g.map(sns.lineplot, "Date", "Arithmetic Mean")
+                # Set axis labels and titles
+                g.set_axis_labels("Date", "Arithmetic Mean")
+                plt.subplots_adjust(top=0.9)
+                g.figure.suptitle(f'Time Series of Arithmetic Mean by CBSA Region (Page {i+1})', fontsize=16)
+
+            # Set titles for each facet
+            g.set_titles(col_template="{col_name}")
+            # Show the plot
+            plt.show()
+
+    def plot_interactive_facet_grid(self, df, dataset_name):
+        # Create an interactive line plot using Plotly
+        fig = px.line(df, x='Date', y='AQI' if dataset_name == 'AQIdata' else 'Arithmetic Mean', 
+                      facet_col='CBSA', facet_col_wrap=4,
+                      title=f'Time Series of {"AQI" if dataset_name == "AQIdata" else "Arithmetic Mean"} by CBSA Region',
+                      height=800)
+        # Update layout for the title
+        fig.update_layout(title_font_size=16)
+        # Show the interactive plot
+        fig.show()
+
+
+
     def close_connection(self):
         self.conn.close()
         print("SQLite connection closed.")
@@ -72,11 +158,20 @@ if __name__ == '__main__':
         eda.print_summary_stats(df, dataset_choice)
 
         print(f"This is the dataset: {dataset_choice}")
+        print(df.nunique())
 
-        if dataset_choice == 'AQIdata':
-            eda.plot_histogram(df, 'AQIdata')
-        else:
-            eda.plot_histogram(df, None)
+        # Call the function for paginated plotting
+        eda.plot_facet_grid_paginated(df, dataset_name='AQIdata', regions_per_page=4)
+
+        # Call the function for interactive plotting
+        eda.plot_interactive_facet_grid(df, dataset_name='AQIdata')
+
+        # if dataset_choice == 'AQIdata':
+        #     #eda.plot_histogram(df, 'AQIdata')
+        #     eda.plot_facet_grid_line(df, 'AQIdata')
+        # else:
+        #     eda.plot_histogram(df, None)
+        #     eda.plot_facet_grid_line(df, None)
 
         prompt = input("Do you want to analyze another dataset? (yes/no): ").lower()
         if prompt != 'yes':
