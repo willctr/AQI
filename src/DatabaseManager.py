@@ -18,6 +18,8 @@ class DatabaseManager:
         # temperature table
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS temperatures (
+                "Latitude" REAL,
+                "Longitude" REAL,
                 "Date Local" TEXT,
                 "Arithmetic Mean" REAL,
                 "1st Max Value" REAL,
@@ -45,6 +47,8 @@ class DatabaseManager:
         # ozone table
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS ozone (
+                "Latitude" REAL,
+                "Longitude" REAL,
                 "Date Local" TEXT,
                 "Arithmetic Mean" REAL,
                 "1st Max Value" REAL,
@@ -60,6 +64,8 @@ class DatabaseManager:
         # PM2.5 table
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS pm25 (
+                "Latitude" REAL,
+                "Longitude" REAL,
                 "Date Local" TEXT,
                 "Arithmetic Mean" REAL,
                 "1st Max Value" REAL,
@@ -75,6 +81,8 @@ class DatabaseManager:
         # PM10 table
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS pm10 (
+                "Latitude" REAL,
+                "Longitude" REAL,
                 "Date Local" TEXT,
                 "Arithmetic Mean" REAL,
                 "1st Max Value" REAL,
@@ -90,6 +98,8 @@ class DatabaseManager:
         # NO2 table
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS no2 (
+                "Latitude" REAL,
+                "Longitude" REAL,
                 "Date Local" TEXT,
                 "Arithmetic Mean" REAL,
                 "1st Max Value" REAL,
@@ -105,6 +115,8 @@ class DatabaseManager:
         # SO2 table
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS so2 (
+                "Latitude" REAL,
+                "Longitude" REAL,
                 "Date Local" TEXT,
                 "Arithmetic Mean" REAL,
                 "1st Max Value" REAL,
@@ -120,6 +132,8 @@ class DatabaseManager:
         # CO table
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS co (
+                "Latitude" REAL,
+                "Longitude" REAL,
                 "Date Local" TEXT,
                 "Arithmetic Mean" REAL,
                 "1st Max Value" REAL,
@@ -150,9 +164,9 @@ class DatabaseManager:
                         # Insert data into table
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO temperatures 
-                            ("Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
+                            ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
                             "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into temperatures table from {csv_file}")
             else:
@@ -193,8 +207,9 @@ class DatabaseManager:
                         # Insert data into table
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO ozone 
-                            ("Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
+                            "Address", "State Name", "County Name", "City Name", "CBSA Name")
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into ozone table from {csv_file}")
             else:
@@ -216,9 +231,9 @@ class DatabaseManager:
                         # Insert data into table
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO pm25 
-                            ("Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
+                            ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
                             "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into pm2.5 table from {csv_file}")
             else:
@@ -238,9 +253,9 @@ class DatabaseManager:
                         # Insert data into table
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO pm10
-                            ("Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
+                            ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
                             "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into pm10 table from {csv_file}")
             else:
@@ -260,9 +275,9 @@ class DatabaseManager:
                         # Insert data into table
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO no2 
-                            ("Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
+                            ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
                             "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into NO2 table from {csv_file}")
             else:
@@ -282,9 +297,9 @@ class DatabaseManager:
                         # Insert data into table
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO so2 
-                            ("Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
+                            ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
                             "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into SO2 table from {csv_file}")
             else:
@@ -304,9 +319,9 @@ class DatabaseManager:
                         # Insert data into table
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO co 
-                            ("Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
+                            ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
                             "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into CO table from {csv_file}")
             else:
@@ -337,6 +352,3 @@ if __name__ == '__main__':
 
     # Close connection
     db_manager.close_connection()
-
-
-
