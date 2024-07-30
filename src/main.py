@@ -1,9 +1,7 @@
 import pandas as pd
 import numpy as np 
 import matplotlib as plt
-
 import os
-import pandas as pd
 from eda import EDA
 
 if __name__ == '__main__':
@@ -35,6 +33,9 @@ if __name__ == '__main__':
 
         # Call the function for interactive plotting
         eda.plot_interactive_facet_grid(df, dataset_name=dataset_choice)
+
+        # Call the function for spatial heatmap plotting
+        eda.plot_spatial_heatmap(df, dataset_name=dataset_choice)
 
         prompt = input("Do you want to analyze another dataset? (yes/no): ").lower()
         if prompt != 'yes':
