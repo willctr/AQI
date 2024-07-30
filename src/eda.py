@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np 
 import plotly.express as px 
+import geopandas as gpd
 
 class EDA:
     def __init__(self, db_name='air.db'):
@@ -120,6 +121,57 @@ class EDA:
                       height=800)
         fig.update_layout(title_font_size=16)
         fig.show()
+
+    def plot_spatial_heatmap(self, df, dataset_name):
+        # Check for necessary columns
+        if 'CBSA' in df.columns:
+            location_col = 'CBSA'
+        elif 'CBSA Name' in df.columns:
+            location_col = 'CBSA Name'
+        else:
+            print("Location column not found in the dataset.")
+            return
+
+        if dataset_name == 'AQIdata':
+            print("Spatial heatmaps are not available for AQIdata due to lack of latitude and longitude data.")
+            return
+        
+        # Assuming Latitude and Longitude columns are present in the dataset
+        if 'Latitude' not in df.columns or 'Longitude' not in df.columns:
+            print("Latitude and Longitude columns are required for spatial heatmaps.")
+            return
+
+        if 'Arithmetic Mean' not in df.columns:
+            print("Arithmetic Mean column not found in the dataset.")
+            return
+
+        # Ensure latitude and longitude data are numeric
+        df['Latitude'] = pd.to_numeric(df['Latitude'], errors='coerce')
+        df['Longitude'] = pd.to_numeric(df['Longitude'], errors='coerce')
+
+        # Drop rows with invalid coordinates
+        df = df.dropna(subset=['Latitude', 'Longitude'])
+
+        # Aggregate data for the entire state
+        aggregated_df = df.groupby(['Latitude', 'Longitude']).agg({'Arithmetic Mean': 'mean'}).reset_index()
+
+        # Check if there is any data left after aggregation
+        if aggregated_df.empty:
+            print("No valid data available for heatmap.")
+            return
+        
+        # Print some of the data to verify
+        print("Sample data for scatter plot:")
+        print(aggregated_df[['Latitude', 'Longitude']].head(20))  # Print 20 rows
+
+        # Plot heatmap
+        fig = px.density_mapbox(aggregated_df, lat='Latitude', lon='Longitude', z='Arithmetic Mean', radius=10,
+                                center=dict(lat=df['Latitude'].mean(), lon=df['Longitude'].mean()), zoom=5,
+                                mapbox_style="open-street-map",
+                                title=f'Spatial Heatmap of Arithmetic Mean {dataset_name.upper()}')
+        fig.update_layout(title_font_size=16)
+        fig.show()
+
 
     def filter_by_state(self, df, state_name):
         if 'CBSA' in df.columns:
