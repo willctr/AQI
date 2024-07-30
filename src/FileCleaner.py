@@ -65,7 +65,7 @@ class FileCleaner:
                 output_file = os.path.join(self.temp_directory, f'cleaned_temp_{year}.csv')
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
+                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
@@ -88,7 +88,7 @@ class FileCleaner:
                 output_file = os.path.join(self.ozone_directory, f'cleaned_ozone_{year}.csv')
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
+                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
@@ -111,7 +111,7 @@ class FileCleaner:
                 output_file = os.path.join(self.pm25_directory, f'cleaned_pm25_{year}.csv')
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
+                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
@@ -134,7 +134,7 @@ class FileCleaner:
                 output_file = os.path.join(self.pm10_directory, f'cleaned_pm10_{year}.csv')
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
+                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
@@ -158,7 +158,7 @@ class FileCleaner:
                 output_file = os.path.join(self.no2_directory, f'cleaned_no2_{year}.csv')
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
+                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
@@ -181,7 +181,7 @@ class FileCleaner:
                 output_file = os.path.join(self.so2_directory, f'cleaned_so2_{year}.csv')
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
+                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
@@ -204,7 +204,7 @@ class FileCleaner:
                 output_file = os.path.join(self.co_directory, f'cleaned_co_{year}.csv')
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", 
+                columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
                                 "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
