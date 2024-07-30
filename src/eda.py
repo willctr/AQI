@@ -160,9 +160,9 @@ class EDA:
             print("No valid data available for heatmap.")
             return
         
-        # Print some of the data to verify
-        print("Sample data for scatter plot:")
-        print(aggregated_df[['Latitude', 'Longitude']].head(20))  # Print 20 rows
+        # # Print some of the data to verify
+        # print("Sample data for scatter plot:")
+        # print(aggregated_df[['Latitude', 'Longitude']].head(20))  # Print 20 rows
 
         # Plot heatmap
         fig = px.density_mapbox(aggregated_df, lat='Latitude', lon='Longitude', z='Arithmetic Mean', radius=10,
