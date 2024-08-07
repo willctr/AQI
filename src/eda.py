@@ -57,6 +57,25 @@ class EDA:
             except ValueError:
                 print("Invalid input. Please enter a number.")
 
+    def filter_by_state(self, df, state_name):
+        # if CBSA is a df column then this is aqi df
+        if 'CBSA' in df.columns:
+            filtered_df = df[df['CBSA'].str.endswith(state_name)]
+        # non-aqi df
+        # elif 'State Name' in df.columns:
+        #     filtered_df = df[df['State Name'] == state_name]
+        # ! marked point
+        elif 'CBSA Name' in df.columns:
+            filtered_df = df[df['CBSA Name'].str.endswith(state_name)]
+        else:
+            print("State column not found in the dataset.")
+            return pd.DataFrame()
+        
+        if filtered_df.empty:
+            print(f"No data found for state: {state_name}")
+        return filtered_df
+
+
     def load_data(self, table_name):
         query = f"SELECT * FROM {table_name}"
         df = pd.read_sql_query(query, self.conn)
@@ -128,7 +147,7 @@ class EDA:
         fig.update_layout(title_font_size=16)
         fig.show()
 
-    def plot_spatial_heatmap(self, df, dataset_name):
+    def plot_spatial_heatmap(self, df, dataset_name, state_name):
         # Check for necessary columns
         if 'CBSA' in df.columns:
             location_col = 'CBSA'
@@ -174,7 +193,7 @@ class EDA:
         fig = px.density_mapbox(aggregated_df, lat='Latitude', lon='Longitude', z='Arithmetic Mean', radius=10,
                                 center=dict(lat=df['Latitude'].mean(), lon=df['Longitude'].mean()), zoom=5,
                                 mapbox_style="open-street-map",
-                                title=f'Spatial Heatmap of Arithmetic Mean {dataset_name.upper()}')
+                                title=f'Spatial Heatmap of Arithmetic Mean {dataset_name.upper()} ({state_name})')
         fig.update_layout(title_font_size=16)
         fig.show()
 
@@ -332,25 +351,6 @@ class EDA:
 
         # Plot the correlation matrix
         self.plot_correlation_matrix(combined_df, state_name=state_name)
-
-
-    def filter_by_state(self, df, state_name):
-        # if CBSA is a df column then this is aqi df
-        if 'CBSA' in df.columns:
-            filtered_df = df[df['CBSA'].str.endswith(state_name)]
-        # non-aqi df
-        # elif 'State Name' in df.columns:
-        #     filtered_df = df[df['State Name'] == state_name]
-        # ! marked point
-        elif 'CBSA Name' in df.columns:
-            filtered_df = df[df['CBSA Name'].str.endswith(state_name)]
-        else:
-            print("State column not found in the dataset.")
-            return pd.DataFrame()
-        
-        if filtered_df.empty:
-            print(f"No data found for state: {state_name}")
-        return filtered_df
 
     def close_connection(self):
         self.conn.close()
