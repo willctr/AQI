@@ -46,3 +46,21 @@ Overview.txt
 
 # Ignore database created
 air.db
+
+
+# Ignore all CSV files in data/daily_aqi and data/daily_temp directories
+data/*
+
+# Do not ignore cleaned CSV files
+!data/daily_aqi/cleaned_*.csv
+!data/daily_ozone/cleaned_*.csv
+!data/daily_pm2.5/cleaned_*.csv
+!data/daily_pm10/cleaned_*.csv
+!data/daily_so2/cleaned_*.csv
+!data/daily_no2/cleaned_*.csv
+
+
+# Other ignores...
+*.pyc
+__pycache__/
+*.log
