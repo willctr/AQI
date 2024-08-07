@@ -48,16 +48,14 @@ Overview.txt
 air.db
 
 
-# Ignore all CSV files in data/daily_aqi and data/daily_temp directories
-data/*
-
-# Do not ignore cleaned CSV files
-!data/daily_aqi/cleaned_*.csv
-!data/daily_ozone/cleaned_*.csv
-!data/daily_pm2.5/cleaned_*.csv
-!data/daily_pm10/cleaned_*.csv
-!data/daily_so2/cleaned_*.csv
-!data/daily_no2/cleaned_*.csv
+# Ignore all daily CSV files in data folder
+data/daily_aqi/daily_*.csv
+data/daily_temp/daily_*.csv
+data/daily_ozone/daily_*.csv
+data/daily_pm2.5/daily_*.csv
+data/daily_pm10/daily_*.csv
+data/daily_so2/daily_*.csv
+data/daily_no2/daily_*.csv
 
 
 # Other ignores...
