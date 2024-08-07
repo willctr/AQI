@@ -22,10 +22,6 @@ class FileCleaner:
         # Drop rows with any null values
         df = df.dropna()
 
-        # # Change negative values to 0
-        # num_cols = df.select_dtypes(include=['number']).columns  # Select numeric columns
-        # df[num_cols] = df[num_cols].applymap(lambda x: max(0, x))  # Replace negative values with 0 by using max()
-
         # Remove rows where Arithmetic Mean is negative
         if 'Arithmetic Mean' in df.columns:
             # filter the df with boolean Series, evaluates to true if >= 0, keep rows where true
@@ -68,7 +64,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "State Name", "County Name", "City Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 # Apply basic cleaning
@@ -91,7 +87,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "State Name", "County Name", "City Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 # Apply basic cleaning
@@ -114,7 +110,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "State Name", "County Name", "City Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 # Apply basic cleaning
@@ -137,7 +133,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "State Name", "County Name", "City Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 # Apply basic cleaning
@@ -161,7 +157,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "State Name", "County Name", "City Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 # Apply basic cleaning
@@ -184,7 +180,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "State Name", "County Name", "City Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 # Apply basic cleaning
@@ -207,7 +203,7 @@ class FileCleaner:
                 columns_to_drop = ["State Code", "County Code", "Site Num", "Parameter Code", "POC", "Datum", "Parameter Name", 
                                 "Sample Duration", "Pollutant Standard", "Units of Measure", 
                                 "Event Type", "Observation Count", "Observation Percent", "AQI",
-                                "Method Code", "Method Name", "Local Site Name", "Date of Last Change"]
+                                "Method Code", "Method Name", "Local Site Name", "State Name", "County Name", "City Name", "Date of Last Change"]
                 df.drop(columns = columns_to_drop, inplace = True)
 
                 # Apply basic cleaning
