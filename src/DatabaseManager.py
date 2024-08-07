@@ -25,9 +25,6 @@ class DatabaseManager:
                 "1st Max Value" REAL,
                 "1st Max Hour" INTEGER,
                 "Address" TEXT,
-                "State Name" TEXT,
-                "County Name" TEXT,
-                "City Name" TEXT,
                 "CBSA Name" TEXT
             )
         ''')
@@ -54,9 +51,6 @@ class DatabaseManager:
                 "1st Max Value" REAL,
                 "1st Max Hour" INTEGER,
                 "Address" TEXT,
-                "State Name" TEXT,
-                "County Name" TEXT,
-                "City Name" TEXT,
                 "CBSA Name" TEXT
             )
         ''')
@@ -71,9 +65,6 @@ class DatabaseManager:
                 "1st Max Value" REAL,
                 "1st Max Hour" INTEGER,
                 "Address" TEXT,
-                "State Name" TEXT,
-                "County Name" TEXT,
-                "City Name" TEXT,
                 "CBSA Name" TEXT
             )
         ''')
@@ -88,9 +79,6 @@ class DatabaseManager:
                 "1st Max Value" REAL,
                 "1st Max Hour" INTEGER,
                 "Address" TEXT,
-                "State Name" TEXT,
-                "County Name" TEXT,
-                "City Name" TEXT,
                 "CBSA Name" TEXT
             )
         ''')
@@ -105,9 +93,6 @@ class DatabaseManager:
                 "1st Max Value" REAL,
                 "1st Max Hour" INTEGER,
                 "Address" TEXT,
-                "State Name" TEXT,
-                "County Name" TEXT,
-                "City Name" TEXT,
                 "CBSA Name" TEXT
             )
         ''')
@@ -122,9 +107,6 @@ class DatabaseManager:
                 "1st Max Value" REAL,
                 "1st Max Hour" INTEGER,
                 "Address" TEXT,
-                "State Name" TEXT,
-                "County Name" TEXT,
-                "City Name" TEXT,
                 "CBSA Name" TEXT
             )
         ''')
@@ -139,9 +121,6 @@ class DatabaseManager:
                 "1st Max Value" REAL,
                 "1st Max Hour" INTEGER,
                 "Address" TEXT,
-                "State Name" TEXT,
-                "County Name" TEXT,
-                "City Name" TEXT,
                 "CBSA Name" TEXT
             )
         ''')
@@ -165,8 +144,8 @@ class DatabaseManager:
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO temperatures 
                             ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
-                            "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            "Address", "CBSA Name")
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into temperatures table from {csv_file}")
             else:
@@ -208,8 +187,8 @@ class DatabaseManager:
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO ozone 
                             ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
-                            "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            "Address", "CBSA Name")
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into ozone table from {csv_file}")
             else:
@@ -232,8 +211,8 @@ class DatabaseManager:
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO pm25 
                             ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
-                            "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            "Address", "CBSA Name")
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into pm2.5 table from {csv_file}")
             else:
@@ -254,8 +233,8 @@ class DatabaseManager:
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO pm10
                             ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
-                            "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            "Address", "CBSA Name")
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into pm10 table from {csv_file}")
             else:
@@ -276,8 +255,8 @@ class DatabaseManager:
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO no2 
                             ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
-                            "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            "Address", "CBSA Name")
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into NO2 table from {csv_file}")
             else:
@@ -298,8 +277,8 @@ class DatabaseManager:
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO so2 
                             ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
-                            "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            "Address", "CBSA Name")
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into SO2 table from {csv_file}")
             else:
@@ -320,8 +299,8 @@ class DatabaseManager:
                         self.cursor.execute('''
                             INSERT OR IGNORE INTO co 
                             ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
-                            "Address", "State Name", "County Name", "City Name", "CBSA Name")
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            "Address", "CBSA Name")
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         ''', row)
                 print(f"Data loaded into CO table from {csv_file}")
             else:
