@@ -34,8 +34,14 @@ class EDA:
             df_aqi['State'] = df_aqi['CBSA'].apply(lambda x: x.split(', ')[-1])
             states = df_aqi['State'].unique()
         else:
+            # df = self.load_data(table_name)
+            # states = df['State Name'].unique()
+            # ! marked point
             df = self.load_data(table_name)
-            states = df['State Name'].unique()
+            df['State'] = df['CBSA Name'].apply(lambda x: x.split(', ')[-1])
+            states = df['State'].unique()
+
+
         
         print("Choose a state from the following options:")
         for i, state in enumerate(states):
@@ -173,11 +179,171 @@ class EDA:
         fig.show()
 
 
+    # def load_combined_data(self, state_name=None):
+    #     # Load AQI data
+    #     aqi_query = 'SELECT Date, CBSA, AQI FROM AQIdata'
+    #     aqi_df = pd.read_sql(aqi_query, self.conn)
+    #     print("Loaded corr aqi")
+
+    #     # Load temperatures data
+    #     temp_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Temperature FROM temperatures'
+    #     temp_df = pd.read_sql(temp_query, self.conn)
+    #     print("Loaded corr temp")
+
+    #     # Load SO2 data
+    #     so2_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS SO2 FROM so2'
+    #     so2_df = pd.read_sql(so2_query, self.conn)
+    #     print("Loaded corr so2")
+
+    #     # Load ozone data
+    #     ozone_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone FROM ozone'
+    #     ozone_df = pd.read_sql(ozone_query, self.conn)
+    #     print("Loaded corr ozone")
+
+    #     # Load PM10 data
+    #     pm10_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10 FROM pm10'
+    #     pm10_df = pd.read_sql(pm10_query, self.conn)
+    #     print("Loaded corr pm10")
+
+    #     # Load NO2 data
+    #     no2_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2 FROM no2'
+    #     no2_df = pd.read_sql(no2_query, self.conn)
+    #     print("Loaded corr pm2.5")
+
+    #     # Load CO data
+    #     co_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO FROM co'
+    #     co_df = pd.read_sql(co_query, self.conn)
+    #     print("Loaded corr co")
+
+    #     print(f"the state is: {state_name}")
+
+
+    #     # Filter data by state if state_name is provided
+    #     if state_name:
+    #         aqi_df = self.filter_by_state(aqi_df, state_name)
+    #         temp_df = self.filter_by_state(temp_df, state_name)
+    #         so2_df = self.filter_by_state(so2_df, state_name)
+    #         ozone_df = self.filter_by_state(ozone_df, state_name)
+    #         pm10_df = self.filter_by_state(pm10_df, state_name)
+    #         no2_df = self.filter_by_state(no2_df, state_name)
+    #         co_df = self.filter_by_state(co_df, state_name)
+    #     print("filtered df by state")
+
+    #     # Merge all datasets on Date and CBSA Name
+    #     combined_df = aqi_df.merge(temp_df, on=['Date', 'CBSA'], how='left')
+    #     print("comb 1")
+    #     combined_df = combined_df.merge(so2_df, on=['Date', 'CBSA'], how='left')
+    #     print("comb 2")
+    #     combined_df = combined_df.merge(ozone_df, on=['Date', 'CBSA'], how='left')
+    #     print("comb 3")
+    #     combined_df = combined_df.merge(pm10_df, on=['Date', 'CBSA'], how='left')
+    #     print("comb 4")
+    #     combined_df = combined_df.merge(no2_df, on=['Date', 'CBSA'], how='left')
+    #     print("comb 5")
+    #     combined_df = combined_df.merge(co_df, on=['Date', 'CBSA'], how='left')
+    #     print("comb 6")
+
+    #     return combined_df
+
+    # def plot_correlation_matrix(self, df, state_name):
+    #     # Select only numeric columns for correlation analysis
+    #     numeric_df = df.select_dtypes(include=['float64', 'int64'])
+
+    #     # Compute the correlation matrix
+    #     corr_matrix = numeric_df.corr()
+
+    #     # Plot the correlation matrix as a heatmap
+    #     plt.figure(figsize=(10, 8))
+    #     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0, linewidths=0.5)
+    #     plt.title(f'Correlation Matrix ({state_name})')
+    #     plt.show()
+
+    # def analyze_correlations(self, state_name):
+    #     # Load the combined data
+    #     combined_df = self.load_combined_data(state_name=state_name)
+
+    #     # Plot the correlation matrix
+    #     self.plot_correlation_matrix(combined_df, state_name=state_name)
+
+
+    # reduce memory footprint by loading chunks
+    def load_data_in_chunks(self, query, chunk_size=10000):
+        # empty list to store 10000 row chunks
+        chunks = []
+        # query chunks of data
+        for chunk in pd.read_sql(query, self.conn, chunksize=chunk_size):
+            # append chunk to chunks list
+            chunks.append(chunk)
+        # concat to get one dataframe, ignore index for continuous indexing
+        return pd.concat(chunks, ignore_index=True)
+
+    def load_combined_data(self, state_name=None):
+        # Load AQI data in chunks
+        aqi_query = 'SELECT Date, CBSA, AQI FROM AQIdata'
+        aqi_df = self.load_data_in_chunks(aqi_query)
+        print("Loaded AQI data")
+
+        # Load other data in chunks and merge incrementally to prevent memory overload
+        queries = {
+            'Temperature': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Temperature FROM temperatures',
+            'SO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS SO2 FROM so2',
+            'Ozone': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone FROM ozone',
+            'PM10': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10 FROM pm10',
+            'NO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2 FROM no2',
+            'CO': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO FROM co'
+        }
+
+        # initialize combined df with aqi df
+        combined_df = aqi_df
+
+        # iterate over dictionary of queries 
+        for key, query in queries.items():
+            # chunk loading
+            df = self.load_data_in_chunks(query)
+            print(f"Loaded {key} data")
+
+            # filter df by state name
+            if state_name:
+                df = self.filter_by_state(df, state_name)
+                print(f"Filtered {key} data by state")
+
+            # merge df on Date and CBSA and join left to keep all rows
+            combined_df = combined_df.merge(df, on=['Date', 'CBSA'], how='left')
+            print(f"Merged {key} data")
+
+        return combined_df
+
+    def plot_correlation_matrix(self, df, state_name):
+        # Select only numeric columns for correlation analysis
+        numeric_df = df.select_dtypes(include=['float64', 'int64'])
+
+        # Compute the correlation matrix
+        corr_matrix = numeric_df.corr()
+
+        # Plot the correlation matrix as a heatmap
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0, linewidths=0.5)
+        plt.title(f'Correlation Matrix ({state_name})')
+        plt.show()
+
+    def analyze_correlations(self, state_name):
+        # Load the combined data
+        combined_df = self.load_combined_data(state_name=state_name)
+
+        # Plot the correlation matrix
+        self.plot_correlation_matrix(combined_df, state_name=state_name)
+
+
     def filter_by_state(self, df, state_name):
+        # if CBSA is a df column then this is aqi df
         if 'CBSA' in df.columns:
             filtered_df = df[df['CBSA'].str.endswith(state_name)]
-        elif 'State Name' in df.columns:
-            filtered_df = df[df['State Name'] == state_name]
+        # non-aqi df
+        # elif 'State Name' in df.columns:
+        #     filtered_df = df[df['State Name'] == state_name]
+        # ! marked point
+        elif 'CBSA Name' in df.columns:
+            filtered_df = df[df['CBSA Name'].str.endswith(state_name)]
         else:
             print("State column not found in the dataset.")
             return pd.DataFrame()
