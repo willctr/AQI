@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np 
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import os
 from eda import EDA
 
@@ -17,6 +17,7 @@ if __name__ == '__main__':
 
         elif dataset_choice != 'AQIdata':  # Handle state selection for non-AQIdata tables
             state_name = eda.get_state_choice(dataset_choice)
+            # ! normalize state name to abbreviation
             df = eda.filter_by_state(df, state_name)
         
         if df.empty:
@@ -32,10 +33,13 @@ if __name__ == '__main__':
         # eda.plot_facet_grid_paginated(df, dataset_name=dataset_choice, regions_per_page=4)
 
         # Call the function for interactive plotting
-        eda.plot_interactive_facet_grid(df, dataset_name=dataset_choice)
+        # eda.plot_interactive_facet_grid(df, dataset_name=dataset_choice)
 
-        # Call the function for spatial heatmap plotting
-        eda.plot_spatial_heatmap(df, dataset_name=dataset_choice)
+        # # Call the function for spatial heatmap plotting
+        # eda.plot_spatial_heatmap(df, dataset_name=dataset_choice)
+
+        # Call the function for correlation matrix plotting
+        eda.analyze_correlations(state_name)
 
         prompt = input("Do you want to analyze another dataset? (yes/no): ").lower()
         if prompt != 'yes':
