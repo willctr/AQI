@@ -56,6 +56,7 @@ data/daily_pm2.5/daily_*.csv
 data/daily_pm10/daily_*.csv
 data/daily_so2/daily_*.csv
 data/daily_no2/daily_*.csv
+data/daily_co/daily_*.csv
 
 
 # Other ignores...
