@@ -25,24 +25,23 @@ class EDA:
             except ValueError:
                 print("Invalid input. Please enter a number.")
 
-    def load_aqi_data(self):
-        return pd.read_sql_query("SELECT CBSA FROM AQIdata", self.conn)
-
+    # load data from table parameter into dataframe
+    def load_data(self, table_name):
+        df = pd.read_sql_query(f'SELECT * FROM {table_name}', self.conn)
+        
+        return df
+    
+    # user inputs state selection
     def get_state_choice(self, table_name):
         if table_name == 'AQIdata':
-            df_aqi = self.load_aqi_data()
+            df_aqi = self.load_data(table_name)
             df_aqi['State'] = df_aqi['CBSA'].apply(lambda x: x.split(', ')[-1])
             states = df_aqi['State'].unique()
         else:
-            # df = self.load_data(table_name)
-            # states = df['State Name'].unique()
-            # ! marked point
             df = self.load_data(table_name)
             df['State'] = df['CBSA Name'].apply(lambda x: x.split(', ')[-1])
             states = df['State'].unique()
 
-
-        
         print("Choose a state from the following options:")
         for i, state in enumerate(states):
             print(f"{i}. {state}")
@@ -57,14 +56,13 @@ class EDA:
             except ValueError:
                 print("Invalid input. Please enter a number.")
 
+    # filter the df by the state selection
     def filter_by_state(self, df, state_name):
         # if CBSA is a df column then this is aqi df
         if 'CBSA' in df.columns:
+            # filter based on condition that the state in the CBSA matches state_name
             filtered_df = df[df['CBSA'].str.endswith(state_name)]
-        # non-aqi df
-        # elif 'State Name' in df.columns:
-        #     filtered_df = df[df['State Name'] == state_name]
-        # ! marked point
+        # non aqi table has CBSA Name column not CBSA column
         elif 'CBSA Name' in df.columns:
             filtered_df = df[df['CBSA Name'].str.endswith(state_name)]
         else:
@@ -74,12 +72,6 @@ class EDA:
         if filtered_df.empty:
             print(f"No data found for state: {state_name}")
         return filtered_df
-
-
-    def load_data(self, table_name):
-        query = f"SELECT * FROM {table_name}"
-        df = pd.read_sql_query(query, self.conn)
-        return df
 
     def print_summary_stats(self, df, table_name):
         print(f"Summary statistics for table: {table_name}")
@@ -296,6 +288,7 @@ class EDA:
         # concat to get one dataframe, ignore index for continuous indexing
         return pd.concat(chunks, ignore_index=True)
 
+    # load sql queries into df, merge component df into combined df
     def load_combined_data(self, state_name=None):
         # Load AQI data in chunks
         aqi_query = 'SELECT Date, CBSA, AQI FROM AQIdata'
@@ -309,8 +302,10 @@ class EDA:
             'Ozone': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone FROM ozone',
             'PM10': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10 FROM pm10',
             'NO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2 FROM no2',
+            'PM25': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM25 FROM pm25',
             'CO': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO FROM co'
         }
+
 
         # initialize combined df with aqi df
         combined_df = aqi_df
@@ -330,6 +325,61 @@ class EDA:
             combined_df = combined_df.merge(df, on=['Date', 'CBSA'], how='left')
             print(f"Merged {key} data")
 
+        pre_row_total = len(combined_df)
+        print(f"Total rows in df pre drop nan: {pre_row_total}")
+
+
+        # Filter rows where all specified columns have values that are not negative and not null
+        df2 = combined_df[
+            (combined_df["AQI"] >= 0) &
+            (combined_df["Temperature"] >= 0) &
+            (combined_df["SO2"] >= 0) &
+            (combined_df["Ozone"] >= 0) &
+            (combined_df["PM10"] >= 0) &
+            (combined_df["PM25"] >= 0) &
+            (combined_df["NO2"] >= 0) &
+            (combined_df["CO"] >= 0)
+        ]
+
+        # Count the number of rows in the filtered DataFrame
+        total_filled_rows = len(df2)
+        print(f"Number of rows where all specified columns have values greater than 0: {total_filled_rows}")
+
+        # Drop rows with any NaN values in the value columns
+        value_columns = ['AQI', 'Temperature', 'SO2', 'Ozone', 'PM10', 'PM25', 'NO2', 'CO']
+        combined_df = combined_df.dropna(subset=value_columns)
+
+        # Filter rows where all pollutant values are >= 0
+        combined_df = combined_df[
+            (combined_df[value_columns] >= 0).all(axis=1)
+        ]
+
+        # total rows in df
+        row_total = len(combined_df)
+        print(f"Total rows in df post drop nan: {row_total}")
+
+        # Optionally, print a sample of the combined DataFrame
+        # total_rows = len(combined_df)
+        # print(f"Total rows: {total_rows}")
+        # print(f"Combined df sample: {combined_df.head(n=5)}")
+            
+        # # Filter rows where all specified columns have values > 0
+        # df2 = combined_df[
+        #     (combined_df["AQI"] > 0) &
+        #     (combined_df["Temperature"] > 0) &
+        #     (combined_df["SO2"] > 0) &
+        #     (combined_df["Ozone"] > 0) &
+        #     (combined_df["PM10"] > 0) &
+        #     (combined_df["PM25"] > 0) &
+        #     (combined_df["NO2"] > 0) &
+        #     (combined_df["CO"] > 0)
+        # ]
+
+        # # Count the number of rows in the filtered DataFrame
+        # total_filled_rows = len(df2)
+        # print(f"Number of rows where all specified columns have values greater than 0: {total_filled_rows}")
+
+
         return combined_df
 
     def plot_correlation_matrix(self, df, state_name):
@@ -345,6 +395,7 @@ class EDA:
         plt.title(f'Correlation Matrix ({state_name})')
         plt.show()
 
+    # get combined df and pass to plot correlation matrix
     def analyze_correlations(self, state_name):
         # Load the combined data
         combined_df = self.load_combined_data(state_name=state_name)
