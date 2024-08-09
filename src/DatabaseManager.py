@@ -131,6 +131,24 @@ class DatabaseManager:
         # commit transaction, save state
         self.conn.commit()
 
+    # ! generic method for loading data, reduce code duplication
+    # def load_data(self, table_name, csv_path, columns):
+    #     for year in range(2013, 2024):
+    #         csv_file = f'{csv_path}/cleaned_{table_name}_{year}.csv'
+    #         if os.path.exists(csv_file):
+    #             with open(csv_file, 'r', newline='') as csvfile:
+    #                 csvreader = csv.reader(csvfile)
+    #                 next(csvreader)  # Skip header row
+    #                 for row in csvreader:
+    #                     self.cursor.execute(f'''
+    #                         INSERT OR IGNORE INTO {table_name} ({', '.join(columns)})
+    #                         VALUES ({', '.join('?' for _ in columns)})
+    #                     ''', row)
+    #             print(f"Data loaded into {table_name} table from {csv_file}")
+    #         else:
+    #             print(f"File {csv_file} not found.")
+    #     self.conn.commit()
+
     # Load data from CSV into temperatures table
     def load_temperature_data(self):
         for year in range(2013, 2024):  # Years from 2013 to 2023
