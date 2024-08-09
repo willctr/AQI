@@ -189,94 +189,6 @@ class EDA:
         fig.update_layout(title_font_size=16)
         fig.show()
 
-
-    # def load_combined_data(self, state_name=None):
-    #     # Load AQI data
-    #     aqi_query = 'SELECT Date, CBSA, AQI FROM AQIdata'
-    #     aqi_df = pd.read_sql(aqi_query, self.conn)
-    #     print("Loaded corr aqi")
-
-    #     # Load temperatures data
-    #     temp_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Temperature FROM temperatures'
-    #     temp_df = pd.read_sql(temp_query, self.conn)
-    #     print("Loaded corr temp")
-
-    #     # Load SO2 data
-    #     so2_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS SO2 FROM so2'
-    #     so2_df = pd.read_sql(so2_query, self.conn)
-    #     print("Loaded corr so2")
-
-    #     # Load ozone data
-    #     ozone_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone FROM ozone'
-    #     ozone_df = pd.read_sql(ozone_query, self.conn)
-    #     print("Loaded corr ozone")
-
-    #     # Load PM10 data
-    #     pm10_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10 FROM pm10'
-    #     pm10_df = pd.read_sql(pm10_query, self.conn)
-    #     print("Loaded corr pm10")
-
-    #     # Load NO2 data
-    #     no2_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2 FROM no2'
-    #     no2_df = pd.read_sql(no2_query, self.conn)
-    #     print("Loaded corr pm2.5")
-
-    #     # Load CO data
-    #     co_query = 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO FROM co'
-    #     co_df = pd.read_sql(co_query, self.conn)
-    #     print("Loaded corr co")
-
-    #     print(f"the state is: {state_name}")
-
-
-    #     # Filter data by state if state_name is provided
-    #     if state_name:
-    #         aqi_df = self.filter_by_state(aqi_df, state_name)
-    #         temp_df = self.filter_by_state(temp_df, state_name)
-    #         so2_df = self.filter_by_state(so2_df, state_name)
-    #         ozone_df = self.filter_by_state(ozone_df, state_name)
-    #         pm10_df = self.filter_by_state(pm10_df, state_name)
-    #         no2_df = self.filter_by_state(no2_df, state_name)
-    #         co_df = self.filter_by_state(co_df, state_name)
-    #     print("filtered df by state")
-
-    #     # Merge all datasets on Date and CBSA Name
-    #     combined_df = aqi_df.merge(temp_df, on=['Date', 'CBSA'], how='left')
-    #     print("comb 1")
-    #     combined_df = combined_df.merge(so2_df, on=['Date', 'CBSA'], how='left')
-    #     print("comb 2")
-    #     combined_df = combined_df.merge(ozone_df, on=['Date', 'CBSA'], how='left')
-    #     print("comb 3")
-    #     combined_df = combined_df.merge(pm10_df, on=['Date', 'CBSA'], how='left')
-    #     print("comb 4")
-    #     combined_df = combined_df.merge(no2_df, on=['Date', 'CBSA'], how='left')
-    #     print("comb 5")
-    #     combined_df = combined_df.merge(co_df, on=['Date', 'CBSA'], how='left')
-    #     print("comb 6")
-
-    #     return combined_df
-
-    # def plot_correlation_matrix(self, df, state_name):
-    #     # Select only numeric columns for correlation analysis
-    #     numeric_df = df.select_dtypes(include=['float64', 'int64'])
-
-    #     # Compute the correlation matrix
-    #     corr_matrix = numeric_df.corr()
-
-    #     # Plot the correlation matrix as a heatmap
-    #     plt.figure(figsize=(10, 8))
-    #     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0, linewidths=0.5)
-    #     plt.title(f'Correlation Matrix ({state_name})')
-    #     plt.show()
-
-    # def analyze_correlations(self, state_name):
-    #     # Load the combined data
-    #     combined_df = self.load_combined_data(state_name=state_name)
-
-    #     # Plot the correlation matrix
-    #     self.plot_correlation_matrix(combined_df, state_name=state_name)
-
-
     # reduce memory footprint by loading chunks
     def load_data_in_chunks(self, query, chunk_size=10000):
         # empty list to store 10000 row chunks
@@ -301,9 +213,10 @@ class EDA:
             'SO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS SO2 FROM so2',
             'Ozone': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone FROM ozone',
             'PM10': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10 FROM pm10',
-            'NO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2 FROM no2',
-            'PM25': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM25 FROM pm25',
-            'CO': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO FROM co'
+            # ! df's not included because of memory pressure during merge
+            # 'NO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2 FROM no2',
+            # 'PM25': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM25 FROM pm25',
+            # 'CO': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO FROM co'
         }
 
 
@@ -325,59 +238,27 @@ class EDA:
             combined_df = combined_df.merge(df, on=['Date', 'CBSA'], how='left')
             print(f"Merged {key} data")
 
-        pre_row_total = len(combined_df)
-        print(f"Total rows in df pre drop nan: {pre_row_total}")
-
-
         # Filter rows where all specified columns have values that are not negative and not null
-        df2 = combined_df[
+        combined_df = combined_df[
             (combined_df["AQI"] >= 0) &
             (combined_df["Temperature"] >= 0) &
             (combined_df["SO2"] >= 0) &
             (combined_df["Ozone"] >= 0) &
-            (combined_df["PM10"] >= 0) &
-            (combined_df["PM25"] >= 0) &
-            (combined_df["NO2"] >= 0) &
-            (combined_df["CO"] >= 0)
+            (combined_df["PM10"] >= 0) #&
+            # ! df's not inlcuded bc of memory pressure
+            # (combined_df["PM25"] >= 0) &
+            # (combined_df["NO2"] >= 0) &
+            # (combined_df["CO"] >= 0)
         ]
 
-        # Count the number of rows in the filtered DataFrame
-        total_filled_rows = len(df2)
-        print(f"Number of rows where all specified columns have values greater than 0: {total_filled_rows}")
+        # Print sample of the combined df
+        print(f"{combined_df.sample(n=10)}")
 
-        # Drop rows with any NaN values in the value columns
-        value_columns = ['AQI', 'Temperature', 'SO2', 'Ozone', 'PM10', 'PM25', 'NO2', 'CO']
-        combined_df = combined_df.dropna(subset=value_columns)
+        # Count the number of unique CBSA values
+        unique_cbsa_count = combined_df['CBSA'].nunique()
 
-        # Filter rows where all pollutant values are >= 0
-        combined_df = combined_df[
-            (combined_df[value_columns] >= 0).all(axis=1)
-        ]
-
-        # total rows in df
-        row_total = len(combined_df)
-        print(f"Total rows in df post drop nan: {row_total}")
-
-        # Optionally, print a sample of the combined DataFrame
-        # total_rows = len(combined_df)
-        # print(f"Total rows: {total_rows}")
-        # print(f"Combined df sample: {combined_df.head(n=5)}")
-            
-        # # Filter rows where all specified columns have values > 0
-        # df2 = combined_df[
-        #     (combined_df["AQI"] > 0) &
-        #     (combined_df["Temperature"] > 0) &
-        #     (combined_df["SO2"] > 0) &
-        #     (combined_df["Ozone"] > 0) &
-        #     (combined_df["PM10"] > 0) &
-        #     (combined_df["PM25"] > 0) &
-        #     (combined_df["NO2"] > 0) &
-        #     (combined_df["CO"] > 0)
-        # ]
-
-        # # Count the number of rows in the filtered DataFrame
-        # total_filled_rows = len(df2)
-        # print(f"Number of rows where all specified columns have values greater than 0: {total_filled_rows}")
+        # Print the count
+        print(f"Number of unique CBSAs: {unique_cbsa_count}")
 
 
         return combined_df
