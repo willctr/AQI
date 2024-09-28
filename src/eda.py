@@ -7,6 +7,24 @@ import plotly.express as px
 import geopandas as gpd
 
 class EDA:
+
+    # Mapping dictionary of state abbreviations to full names
+    state_abbreviation_map = {
+        'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+        'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+        'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
+        'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
+        'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+        'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
+        'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+        'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+        'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
+        'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+        'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
+        'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+        'WI': 'Wisconsin', 'WY': 'Wyoming'
+    }
+
     def __init__(self, db_name='air.db'):
         self.conn = sqlite3.connect(db_name)
 
@@ -72,6 +90,8 @@ class EDA:
         if filtered_df.empty:
             print(f"No data found for state: {state_name}")
         return filtered_df
+
+
 
     def print_summary_stats(self, df, table_name):
         print(f"Summary statistics for table: {table_name}")
@@ -189,6 +209,8 @@ class EDA:
         fig.update_layout(title_font_size=16)
         fig.show()
 
+
+
     # reduce memory footprint by loading chunks
     def load_data_in_chunks(self, query, chunk_size=10000):
         # empty list to store 10000 row chunks
@@ -201,67 +223,125 @@ class EDA:
         return pd.concat(chunks, ignore_index=True)
 
     # load sql queries into df, merge component df into combined df
-    def load_combined_data(self, state_name=None):
+    def load_combined_data(self, state_name=None, geometry=False):
         # Load AQI data in chunks
         aqi_query = 'SELECT Date, CBSA, AQI FROM AQIdata'
         aqi_df = self.load_data_in_chunks(aqi_query)
         print("Loaded AQI data")
 
-        # Load other data in chunks and merge incrementally to prevent memory overload
-        queries = {
-            'Temperature': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Temperature FROM temperatures',
-            'SO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS SO2 FROM so2',
-            'Ozone': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone FROM ozone',
-            'PM10': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10 FROM pm10',
-            # ! df's not included because of memory pressure during merge
-            # 'NO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2 FROM no2',
-            # 'PM25': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM25 FROM pm25',
-            # 'CO': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO FROM co'
-        }
-
-
         # initialize combined df with aqi df
         combined_df = aqi_df
 
-        # iterate over dictionary of queries 
-        for key, query in queries.items():
-            # chunk loading
-            df = self.load_data_in_chunks(query)
-            print(f"Loaded {key} data")
+        # Latitude and Longitude pulled from tables
+        if geometry:
+            # Load other data in chunks and merge incrementally to prevent memory overload
+            queries = {
+                'Temperature': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Temperature, Longitude, Latitude FROM temperatures',
+                'SO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS SO2, Longitude, Latitude FROM so2',
+                'Ozone': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone, Longitude, Latitude FROM ozone',
+                'PM10': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10, Longitude, Latitude FROM pm10',
+                # ! df's not included because of memory pressure during merge
+                # 'NO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2, Longitude, Latitude FROM no2',
+                # 'PM25': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM25, Longitude, Latitude FROM pm25',
+                # 'CO': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO, Longitude, Latitude FROM co'
+            } 
+            
+            # iterate over dictionary of queries 
+            for key, query in queries.items():
+                # chunk loading
+                df = self.load_data_in_chunks(query)
+                print(f"Loaded {key} data")
 
-            # filter df by state name
+                # filter df by state name
+                if state_name:
+                    df = self.filter_by_state(df, state_name)
+                    print(f"Filtered {key} data by state")
+
+                # Merge df on Date and CBSA with specific suffix handling
+                suffix = f'_{key.lower()}'
+                combined_df = combined_df.merge(df, on=['Date', 'CBSA'], how='left', suffixes=('', suffix))
+                print(f"Merged {key} data")
+
+                # Rename Latitude and Longitude columns with specific suffixes
+                latitude_col = f'Latitude{suffix}'
+                longitude_col = f'Longitude{suffix}'
+                
+                # Fill Latitude and Longitude only if they are currently NaN in combined_df
+                if latitude_col in combined_df.columns:
+                    combined_df['Latitude'] = combined_df['Latitude'].fillna(combined_df[latitude_col])
+                if longitude_col in combined_df.columns:
+                    combined_df['Longitude'] = combined_df['Longitude'].fillna(combined_df[longitude_col])
+
+                # Drop the columns with suffixes after merging
+                combined_df.drop(columns=[latitude_col, longitude_col], inplace=True, errors='ignore')
+                
+
+            # Filter the combined_df by state, long and lat introduce unfiltered data
             if state_name:
-                df = self.filter_by_state(df, state_name)
-                print(f"Filtered {key} data by state")
-
-            # merge df on Date and CBSA and join left to keep all rows
-            combined_df = combined_df.merge(df, on=['Date', 'CBSA'], how='left')
-            print(f"Merged {key} data")
-
-        # Filter rows where all specified columns have values that are not negative and not null
-        combined_df = combined_df[
-            (combined_df["AQI"] >= 0) &
-            (combined_df["Temperature"] >= 0) &
-            (combined_df["SO2"] >= 0) &
-            (combined_df["Ozone"] >= 0) &
-            (combined_df["PM10"] >= 0) #&
-            # ! df's not inlcuded bc of memory pressure
-            # (combined_df["PM25"] >= 0) &
-            # (combined_df["NO2"] >= 0) &
-            # (combined_df["CO"] >= 0)
-        ]
-
-        # Print sample of the combined df
-        print(f"{combined_df.sample(n=10)}")
-
-        # Count the number of unique CBSA values
-        unique_cbsa_count = combined_df['CBSA'].nunique()
-
-        # Print the count
-        print(f"Number of unique CBSAs: {unique_cbsa_count}")
+                combined_df = self.filter_by_state(combined_df, state_name)
+                print(f"Filtered final combined_df by state")
 
 
-        return combined_df
+            # Print sample of the combined df
+            print(f"{combined_df.sample(n=10)}")
+            # Count the number of unique CBSA values
+            unique_cbsa_count = combined_df['CBSA'].nunique()
+            # Print the count
+            print(f"Number of unique CBSAs: {unique_cbsa_count}")
+            
+            return combined_df
+
+        # no location coords pulled from tables
+        else:
+            # Load other data in chunks and merge incrementally to prevent memory overload
+            queries = {
+                'Temperature': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Temperature FROM temperatures',
+                'SO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS SO2 FROM so2',
+                'Ozone': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone FROM ozone',
+                'PM10': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10 FROM pm10',
+                # ! df's not included because of memory pressure during merge
+                # 'NO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2 FROM no2',
+                # 'PM25': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM25 FROM pm25',
+                # 'CO': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO FROM co'
+            }
+
+            # iterate over dictionary of queries 
+            for key, query in queries.items():
+                # chunk loading
+                df = self.load_data_in_chunks(query)
+                print(f"Loaded {key} data")
+
+                # filter df by state name
+                if state_name:
+                    df = self.filter_by_state(df, state_name)
+                    print(f"Filtered {key} data by state")
+
+                # merge df on Date and CBSA and join left to keep all rows
+                combined_df = combined_df.merge(df, on=['Date', 'CBSA'], how='left')
+                print(f"Merged {key} data")
+
+            # Filter rows where all specified columns have values that are not negative and not null
+            combined_df = combined_df[
+                (combined_df["AQI"] >= 0) &
+                (combined_df["Temperature"] >= 0) &
+                (combined_df["SO2"] >= 0) &
+                (combined_df["Ozone"] >= 0) &
+                (combined_df["PM10"] >= 0) #&
+                # ! df's not inlcuded bc of memory pressure
+                # (combined_df["PM25"] >= 0) &
+                # (combined_df["NO2"] >= 0) &
+                # (combined_df["CO"] >= 0)
+            ]
+
+            # Print sample of the combined df
+            print(f"{combined_df.sample(n=10)}")
+            # Count the number of unique CBSA values
+            unique_cbsa_count = combined_df['CBSA'].nunique()
+            # Print the count
+            print(f"Number of unique CBSAs: {unique_cbsa_count}")
+
+            return combined_df
+
 
     def plot_correlation_matrix(self, df, state_name):
         # Select only numeric columns for correlation analysis
@@ -279,10 +359,109 @@ class EDA:
     # get combined df and pass to plot correlation matrix
     def analyze_correlations(self, state_name):
         # Load the combined data
-        combined_df = self.load_combined_data(state_name=state_name)
+        combined_df = self.load_combined_data(state_name=state_name, geometry=True)
 
         # Plot the correlation matrix
         self.plot_correlation_matrix(combined_df, state_name=state_name)
+
+
+    def create_geodataframe(self, df):
+        gdf = gpd.GeoDataFrame(
+            df, geometry=gpd.points_from_xy(df['Longitude'], df['Latitude'])
+        )
+        print("This is geo df: \n" )
+        print(gdf.sample(n=5))
+        return gdf
+    
+    def create_layers(self, gdf):
+        layers = {}
+        variables = ['AQI', 'Temperature', 'SO2', 'Ozone', 'PM10']
+        # ! if memory pressue is solved use full variables list
+        #variables = ['AQI', 'Temperature', 'SO2', 'Ozone', 'PM10', 'PM25', 'NO2', 'CO']
+
+        for variable in variables:
+            # Create a layer for each variable
+            layers[variable] = gdf.dropna(subset=[variable])
+
+        return layers
+    
+    def plot_overlay_map(self, state_name, geo_df):
+
+        # Mapping dictionary of state abbreviations to full names
+        state_abbreviation_map = {
+            'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+            'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+            'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
+            'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
+            'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+            'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
+            'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+            'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+            'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
+            'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+            'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
+            'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+            'WI': 'Wisconsin', 'WY': 'Wyoming'
+        }
+
+        # Convert state abbreviation to full name if needed
+        if state_name in state_abbreviation_map:
+            state_name = state_abbreviation_map[state_name]
+
+        # Load the shapefile for US CBSA boundaries
+        shapefile_path = 'tl_2023_us_state/tl_2023_us_state.shp'
+        state_boundaries = gpd.read_file(shapefile_path)
+        
+        # Print valid state names in shapefile (for debugging)
+        print("Valid state names in shapefile:")
+        print(state_boundaries['NAME'].unique())
+        
+        # # Extract CBSA codes from the GeoDataFrame
+        # cbsa_codes = geo_df['CBSA'].unique()
+        # print("cbsa names in the geo df: \n")
+        # print(cbsa_codes.unique())
+
+        # Filter the boundaries for the selected state or region
+        if '-' in state_name:
+            states = state_name.split('-')
+            state_boundaries = state_boundaries[state_boundaries['NAME'].isin(states)]
+        else:
+            state_boundaries = state_boundaries[state_boundaries['NAME'] == state_name]
+
+        if state_boundaries.empty:
+            raise ValueError(f"State(s) '{state_name}' not found in shapefile.")
+        
+        
+        # Plot the boundaries
+        base = state_boundaries.plot(color='white', edgecolor='black', figsize=(10, 10))
+        
+        # Define the layers to plot
+        variables = ['AQI', 'Temperature', 'SO2', 'PM10', 'Ozone']
+        colors = ['viridis', 'coolwarm', 'plasma', 'magma', 'cividis']  # Different color maps for variety
+        
+        # Plot each layer
+        for variable, color in zip(variables, colors):
+            if variable in geo_df.columns:
+                plt.scatter(x=geo_df['Longitude'], y=geo_df['Latitude'], c=geo_df[variable], 
+                            cmap=color, label=variable, alpha=0.5, edgecolor='k', s=20)
+        
+        plt.title(f'Spatial Overlay Map ({state_name})')
+        plt.legend(loc='upper left')
+        plt.show()
+
+    def create_overlay(self, state_name):
+        # Load the combined df with geometry
+        df = self.load_combined_data(state_name=state_name, geometry=True)
+
+        # Create a geo df
+        geo_df = self.create_geodataframe(df)
+
+        # Create layers for map
+        layers = self.create_layers(geo_df)
+
+        # Plot the overlay map
+        self.plot_overlay_map(state_name, geo_df)
+
 
     def close_connection(self):
         self.conn.close()

@@ -32,14 +32,18 @@ if __name__ == '__main__':
         # Call the function for paginated plotting
         # eda.plot_facet_grid_paginated(df, dataset_name=dataset_choice, regions_per_page=4)
 
-        # Call the function for interactive plotting
-        eda.plot_interactive_facet_grid(df, dataset_name=dataset_choice)
+        # # Call the function for interactive plotting
+        # eda.plot_interactive_facet_grid(df, dataset_name=dataset_choice)
 
-        # Call the function for spatial heatmap plotting
-        eda.plot_spatial_heatmap(df, dataset_name=dataset_choice, state_name=state_name)
+        # # Call the function for spatial heatmap plotting
+        # eda.plot_spatial_heatmap(df, dataset_name=dataset_choice, state_name=state_name)
 
-        # Call the function for correlation matrix plotting
-        eda.analyze_correlations(state_name)
+        # # Call the function for correlation matrix plotting
+        # eda.analyze_correlations(state_name)
+
+        # Overlay Map
+        eda.create_overlay(state_name=state_name)
+
 
         prompt = input("Do you want to analyze another dataset? (yes/no): ").lower()
         if prompt != 'yes':
