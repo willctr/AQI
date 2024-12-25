@@ -57,7 +57,7 @@ class DatabaseManager:
 
         # PM2.5 table
         self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS pm25 (
+            CREATE TABLE IF NOT EXISTS "pm2.5" (
                 "Latitude" REAL,
                 "Longitude" REAL,
                 "Date Local" TEXT,
@@ -126,7 +126,7 @@ class DatabaseManager:
         ''')
 
 
-        print("Tables created: temperatures, AQIdata, ozone, pm25, pm10, no2, so2, co")
+        print("Tables created: temperatures, AQIdata, ozone, pm2.5, pm10, no2, so2, co")
 
         # commit transaction, save state
         self.conn.commit()
@@ -227,7 +227,7 @@ class DatabaseManager:
                     for row in csvreader:
                         # Insert data into table
                         self.cursor.execute('''
-                            INSERT OR IGNORE INTO pm25 
+                            INSERT OR IGNORE INTO "pm2.5" 
                             ("Latitude", "Longitude", "Date Local", "Arithmetic Mean", "1st Max Value", "1st Max Hour", 
                             "Address", "CBSA Name")
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
