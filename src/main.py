@@ -8,7 +8,7 @@ import webbrowser
 eda = EDA()
 
 # Define table options
-table_options = ["AQIdata", "temperatures", "ozone", "co", "so2", "no2", "pm25", "pm10"]
+table_options = ["AQIdata", "temperatures", "ozone", "co", "so2", "no2", "pm2.5", "pm10"]
 
 # Define the UI
 app_ui = ui.page_fluid(
