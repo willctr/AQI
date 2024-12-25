@@ -1,5 +1,5 @@
 # AQI Data Science Project
-An investigation pollutant data and temperatures across the US.
+An investigation into pollutant data and temperatures across the US.
 
 ## Description
 This project is a data analysis of AQI data across the US. This project involves the analysis of air quality data collected from various sources. The data includes measurements for different pollutants such as Ozone (O₃), Particulate Matter (PM₂.₅ and PM₁₀), Sulfur Dioxide (SO₂), Nitrogen Dioxide (NO₂), and Carbon Monoxide (CO), along with Air Quality Index (AQI) data. The goal of the project is to clean, store, and analyze this data to gain insights into air quality trends over the years.
