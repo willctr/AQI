@@ -6,6 +6,9 @@ import numpy as np
 import plotly.express as px 
 import geopandas as gpd
 
+from nestedMap import create_nested_map_by_state
+
+
 class EDA:
 
     # Mapping dictionary of state abbreviations to full names
@@ -45,7 +48,7 @@ class EDA:
 
     # load data from table parameter into dataframe
     def load_data(self, table_name):
-        df = pd.read_sql_query(f'SELECT * FROM {table_name}', self.conn)
+        df = pd.read_sql_query(f'SELECT * FROM "{table_name}"', self.conn)
         
         return df
     
@@ -224,6 +227,7 @@ class EDA:
 
     # load sql queries into df, merge component df into combined df
     def load_combined_data(self, state_name=None, geometry=False):
+
         # Load AQI data in chunks
         aqi_query = 'SELECT Date, CBSA, AQI FROM AQIdata'
         aqi_df = self.load_data_in_chunks(aqi_query)
@@ -290,6 +294,8 @@ class EDA:
             print(f"Number of unique CBSAs: {unique_cbsa_count}")
             
             return combined_df
+        
+
 
         # no location coords pulled from tables
         else:
@@ -341,6 +347,10 @@ class EDA:
             print(f"Number of unique CBSAs: {unique_cbsa_count}")
 
             return combined_df
+    
+        df = self.load_data_in_chunks('SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS Ozone, Longitude, Latitude FROM ozone')
+        print(df.head(5))
+        return df
 
 
     def plot_correlation_matrix(self, df, state_name):
