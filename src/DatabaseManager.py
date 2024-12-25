@@ -151,7 +151,7 @@ class DatabaseManager:
 
     # Load data from CSV into temperatures table
     def load_temperature_data(self):
-        for year in range(2013, 2024):  # Years from 2013 to 2023
+        for year in range(2017, 2024):  # Years from 2013 to 2023
             csv_file = f'data/daily_temp/cleaned_temp_{year}.csv'
             if os.path.exists(csv_file):
                 with open(csv_file, 'r', newline='') as csvfile:
@@ -173,7 +173,7 @@ class DatabaseManager:
 
     # Load data from CSV into AQI table
     def load_aqi_data(self):
-        for year in range(2013, 2024):  # Years from 2013 to 2023
+        for year in range(2017, 2024):  # Years from 2013 to 2023
             csv_file = f'data/daily_aqi/cleaned_aqi_{year}.csv'
             if os.path.exists(csv_file):
                 with open(csv_file, 'r', newline='') as csvfile:
@@ -194,7 +194,7 @@ class DatabaseManager:
 
     # Load data from CSV into ozone table
     def load_ozone_data(self):
-        for year in range(2013, 2024):  # Years from 2013 to 2023
+        for year in range(2017, 2024):  # Years from 2013 to 2023
             csv_file = f'data/daily_ozone/cleaned_ozone_{year}.csv'
             if os.path.exists(csv_file):
                 with open(csv_file, 'r', newline='') as csvfile:
@@ -218,7 +218,7 @@ class DatabaseManager:
 
     # Load data from CSV into PM2.5 table
     def load_pm25_data(self):
-        for year in range(2013, 2024):  # Years from 2013 to 2023
+        for year in range(2017, 2024):  # Years from 2013 to 2023
             csv_file = f'data/daily_pm2.5/cleaned_pm25_{year}.csv'
             if os.path.exists(csv_file):
                 with open(csv_file, 'r', newline='') as csvfile:
@@ -240,7 +240,7 @@ class DatabaseManager:
 
     # Load data from CSV into PM10 table
     def load_pm10_data(self):
-        for year in range(2013, 2024):  # Years from 2013 to 2023
+        for year in range(2017, 2024):  # Years from 2013 to 2023
             csv_file = f'data/daily_pm10/cleaned_pm10_{year}.csv'
             if os.path.exists(csv_file):
                 with open(csv_file, 'r', newline='') as csvfile:
@@ -262,7 +262,7 @@ class DatabaseManager:
 
     # Load data from CSV into NO2 table
     def load_no2_data(self):
-        for year in range(2013, 2024):  # Years from 2013 to 2023
+        for year in range(2017, 2024):  # Years from 2013 to 2023
             csv_file = f'data/daily_no2/cleaned_no2_{year}.csv'
             if os.path.exists(csv_file):
                 with open(csv_file, 'r', newline='') as csvfile:
@@ -284,7 +284,7 @@ class DatabaseManager:
 
     # Load data from CSV into SO2 table
     def load_so2_data(self):
-        for year in range(2013, 2024):  # Years from 2013 to 2023
+        for year in range(2017, 2024):  # Years from 2013 to 2023
             csv_file = f'data/daily_so2/cleaned_so2_{year}.csv'
             if os.path.exists(csv_file):
                 with open(csv_file, 'r', newline='') as csvfile:
@@ -306,7 +306,7 @@ class DatabaseManager:
 
     # Load data from CSV into CO table
     def load_co_data(self):
-        for year in range(2013, 2024):  # Years from 2013 to 2023
+        for year in range(2017, 2024):  # Years from 2013 to 2023
             csv_file = f'data/daily_co/cleaned_co_{year}.csv'
             if os.path.exists(csv_file):
                 with open(csv_file, 'r', newline='') as csvfile:
