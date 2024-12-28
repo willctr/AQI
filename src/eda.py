@@ -173,7 +173,7 @@ class EDA:
             return
 
         if dataset_name == 'AQIdata':
-            print("Spatial heatmaps are not available for AQIdata due to lack of latitude and longitude data.")
+            # print("Spatial heatmaps are not available for AQIdata due to lack of latitude and longitude data.")
             return
         
         # Assuming Latitude and Longitude columns are present in the dataset
@@ -186,8 +186,8 @@ class EDA:
             return
 
         # Ensure latitude and longitude data are numeric
-        df['Latitude'] = pd.to_numeric(df['Latitude'], errors='coerce')
-        df['Longitude'] = pd.to_numeric(df['Longitude'], errors='coerce')
+        # df['Latitude'] = pd.to_numeric(df['Latitude'], errors='coerce')
+        # df['Longitude'] = pd.to_numeric(df['Longitude'], errors='coerce')
 
         # Drop rows with invalid coordinates
         df = df.dropna(subset=['Latitude', 'Longitude'])
@@ -210,7 +210,8 @@ class EDA:
                                 mapbox_style="open-street-map",
                                 title=f'Spatial Heatmap of Arithmetic Mean {dataset_name.upper()} ({state_name})')
         fig.update_layout(title_font_size=16)
-        fig.show()
+        #fig.show()
+        return fig
 
 
 
