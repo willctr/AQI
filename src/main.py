@@ -1,8 +1,11 @@
 
+import io
+from matplotlib import pyplot as plt
 import pandas as pd
 from shiny import App, ui, render, reactive
 from eda import EDA
 import webbrowser
+import concurrent.futures
 
 
 # Instantiate your EDA class
@@ -46,8 +49,9 @@ app_ui = ui.page_fluid(
             ui.h3("Summary Statistics"),
             ui.output_text_verbatim("summary_stats"),
             ui.h3("Spatial Heatmap"),
-            ui.output_ui("heatmap")
-
+            ui.output_ui("heatmap"),
+            ui.h3("Correlation Matrix"),
+            ui.output_ui("correlation_matrix")
         )
     )
 )
@@ -69,18 +73,6 @@ def server(input, output, session):
         """Clear state and CBSA selections when table changes"""
         ui.update_select("selected_state", choices=[])
         ui.update_select("selected_cbsa", choices=[])
-
-    # @reactive.Effect
-    # def update_state_options():
-    #     """Update state options based on current table"""
-    #     df = get_base_data()
-    #     if not df.empty:
-    #         if "CBSA" in df.columns:
-    #             df['State'] = df['CBSA'].apply(lambda x: x.split(', ')[-1])
-    #         elif "CBSA Name" in df.columns:
-    #             df['State'] = df['CBSA Name'].apply(lambda x: x.split(', ')[-1])
-    #         states = sorted(df['State'].dropna().unique().tolist())
-    #         ui.update_select("selected_state", choices=states)
     
     @reactive.Effect
     @reactive.event(input.selected_table)
@@ -130,6 +122,7 @@ def server(input, output, session):
         else:
             ui.update_select("selected_cbsa", choices=[], selected=None)
 
+
     @reactive.Calc
     def get_filtered_data():
         """Get filtered data based on all selections"""
@@ -153,6 +146,7 @@ def server(input, output, session):
             df = df[df[cbsa_column] == selected_cbsa]
                 
         return df
+    
 
     @output
     @render.data_frame
@@ -170,6 +164,7 @@ def server(input, output, session):
             return str(df.describe())
         return "No data selected"
     
+
 
     @output
     @render.ui
@@ -193,6 +188,26 @@ def server(input, output, session):
         fig_html = fig.to_html(full_html=False, include_plotlyjs="cdn")
 
         # Return the HTML string to embed the figure
+        return ui.HTML(fig_html)
+    
+
+    @output
+    @render.ui
+    def correlation_matrix():
+        """Generate and display the correlation matrix as a Plotly heatmap."""
+        df = get_filtered_data()
+        selected_state = input.selected_state()
+
+        if df.empty or selected_state is None:
+            return ui.HTML("<p>No data available to generate correlation matrix.</p>")
+
+        # Generate the correlation matrix plotly figure
+        fig = eda.analyze_correlations(selected_state)
+
+        # Convert the Plotly figure to an HTML div string
+        fig_html = fig.to_html(full_html=False, include_plotlyjs="cdn")
+
+        # Return the HTML string to embed the figure in the UI
         return ui.HTML(fig_html)
 
 # Create the app
