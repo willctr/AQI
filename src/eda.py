@@ -29,7 +29,8 @@ class EDA:
     }
 
     def __init__(self, db_name='air.db'):
-        self.conn = sqlite3.connect(db_name)
+        
+        self.db_name = db_name
 
     def get_dataset_choice(self):
         print("Choose a dataset from the following options:")
@@ -48,8 +49,10 @@ class EDA:
 
     # load data from table parameter into dataframe
     def load_data(self, table_name):
-        df = pd.read_sql_query(f'SELECT * FROM "{table_name}"', self.conn)
-        
+
+        conn = sqlite3.connect(self.db_name)
+        df = pd.read_sql_query(f'SELECT * FROM "{table_name}"', conn)
+        conn.close
         return df
     
     # user inputs state selection
@@ -220,9 +223,11 @@ class EDA:
         # empty list to store 10000 row chunks
         chunks = []
         # query chunks of data
-        for chunk in pd.read_sql(query, self.conn, chunksize=chunk_size):
+        conn = sqlite3.connect(self.db_name)
+        for chunk in pd.read_sql(query, conn, chunksize=chunk_size):
             # append chunk to chunks list
             chunks.append(chunk)
+        conn.close
         # concat to get one dataframe, ignore index for continuous indexing
         return pd.concat(chunks, ignore_index=True)
 
@@ -247,7 +252,7 @@ class EDA:
                 'PM10': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM10, Longitude, Latitude FROM pm10',
                 # ! df's not included because of memory pressure during merge
                 # 'NO2': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS NO2, Longitude, Latitude FROM no2',
-                # 'PM25': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM25, Longitude, Latitude FROM pm25',
+                # 'PM25': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS PM25, Longitude, Latitude FROM pm2.5',
                 # 'CO': 'SELECT "Date Local" AS Date, "CBSA Name" AS CBSA, "Arithmetic Mean" AS CO, Longitude, Latitude FROM co'
             } 
             
@@ -353,27 +358,36 @@ class EDA:
         print(df.head(5))
         return df
 
-
     def plot_correlation_matrix(self, df, state_name):
         # Select only numeric columns for correlation analysis
         numeric_df = df.select_dtypes(include=['float64', 'int64'])
 
+        # Exclude 'longitude' and 'latitude' columns if they exist in the DataFrame
+        columns_to_exclude = ['Longitude', 'Latitude']
+        numeric_df = numeric_df.drop(columns=[col for col in columns_to_exclude if col in numeric_df.columns])
+
         # Compute the correlation matrix
         corr_matrix = numeric_df.corr()
 
-        # Plot the correlation matrix as a heatmap
-        plt.figure(figsize=(10, 8))
-        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0, linewidths=0.5)
-        plt.title(f'Correlation Matrix ({state_name})')
-        plt.show()
+        # Use Plotly Express to create a heatmap
+        fig = px.imshow(
+            corr_matrix,  # Correlation matrix
+            labels={'x': 'Variables', 'y': 'Variables'},  # Axis labels
+            title=f'Correlation Matrix ({state_name})',  # Title
+            color_continuous_scale='RdBu',  # Color scale
+            color_continuous_midpoint=0  # Middle point at 0
+        )
+
+        # Return the Plotly figure
+        return fig
+    
 
     # get combined df and pass to plot correlation matrix
     def analyze_correlations(self, state_name):
         # Load the combined data
         combined_df = self.load_combined_data(state_name=state_name, geometry=True)
 
-        # Plot the correlation matrix
-        self.plot_correlation_matrix(combined_df, state_name=state_name)
+        return self.plot_correlation_matrix(combined_df, state_name=state_name)
 
 
     def create_geodataframe(self, df):
