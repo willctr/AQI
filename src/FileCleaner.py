@@ -41,8 +41,17 @@ class FileCleaner:
                 output_file = os.path.join(self.aqi_directory, f'cleaned_aqi_{year}.csv') # save in same directory
 
                 df = pd.read_csv(filepath, low_memory = False)
-                columns_to_drop = ["Defining Site", "Number of Sites Reporting"] # specify which columns to drop
-                df.drop(columns = columns_to_drop, inplace=True) # modify current df
+                columns_to_drop = ['Defining Site', 'Number of Sites Reporting']
+
+                # Keep only columns that actually exist in the DataFrame
+                existing_columns_to_drop = [col for col in columns_to_drop if col in df.columns]
+
+                if existing_columns_to_drop:
+                    df.drop(columns=existing_columns_to_drop, inplace=True)
+                else:
+                    print(f"Warning: Columns not found. Skipping column drop.")
+                # columns_to_drop = ["Defining Site", "Number of Sites Reporting"] # specify which columns to drop
+                # df.drop(columns = columns_to_drop, inplace=True) # modify current df
 
                 # Apply basic cleaning
                 df = self.basic_cleaning(df)
