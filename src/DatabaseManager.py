@@ -180,12 +180,28 @@ class DatabaseManager:
                     csvreader = csv.reader(csvfile)
                     next(csvreader)  # Skip header row
                     for row in csvreader:
+                        # Trim whitespace and check length
+                        row = [col.strip() for col in row]  
+                        
+                        if len(row) != 6:
+                            print(f"Skipping row with incorrect column count ({len(row)}): {row}")
+                            continue  # Skip invalid rows
+                        
                         # Insert data into table
-                        self.cursor.execute('''
-                            INSERT OR IGNORE INTO AQIdata 
-                            (CBSA, "CBSA Code", Date, AQI, Category, "Defining Parameter")
-                            VALUES (?, ?, ?, ?, ?, ?)
-                        ''', row)
+                        try:
+                            self.cursor.execute('''
+                                INSERT OR IGNORE INTO AQIdata 
+                                (CBSA, "CBSA Code", Date, AQI, Category, "Defining Parameter")
+                                VALUES (?, ?, ?, ?, ?, ?)
+                            ''', row)
+                        except Exception as e:
+                            print(f"Error inserting row {row}: {e}")
+                        # # Insert data into table
+                        # self.cursor.execute('''
+                        #     INSERT OR IGNORE INTO AQIdata 
+                        #     (CBSA, "CBSA Code", Date, AQI, Category, "Defining Parameter")
+                        #     VALUES (?, ?, ?, ?, ?, ?)
+                        # ''', row)
                 print(f"Data loaded into AQIdata table from {csv_file}")
             else:
                 print(f"File {csv_file} not found.")
