@@ -1,11 +1,9 @@
 
-import io
 from matplotlib import pyplot as plt
 import pandas as pd
 from shiny import App, ui, render, reactive
 from eda import EDA
 import webbrowser
-import concurrent.futures
 
 
 # Instantiate your EDA class
