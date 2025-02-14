@@ -6,9 +6,6 @@ import numpy as np
 import plotly.express as px 
 import geopandas as gpd
 
-from nestedMap import create_nested_map_by_state
-
-
 class EDA:
 
     # Mapping dictionary of state abbreviations to full names
