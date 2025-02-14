@@ -1,13 +1,50 @@
 
 from matplotlib import pyplot as plt
+import os
 import pandas as pd
 from shiny import App, ui, render, reactive
 from eda import EDA
+from FileCleaner import FileCleaner
+from DatabaseManager import DatabaseManager
 import webbrowser
 
 
-# Instantiate your EDA class
+# Instantiate EDA class
 eda = EDA()
+
+# Define the actual directory paths
+aqi_directory = "data/daily_aqi"
+temp_directory = "data/daily_temp"
+ozone_directory = "data/daily_ozone"
+pm25_directory = "data/daily_pm2.5"
+pm10_directory = "data/daily_pm10"
+no2_directory = "data/daily_no2"
+so2_directory = "data/daily_so2"
+co_directory = "data/daily_co"
+
+# Instantiate FileCleaner class
+file_cleaner = FileCleaner(
+    aqi_directory, temp_directory, ozone_directory, 
+    pm25_directory, pm10_directory, no2_directory, 
+    so2_directory, co_directory
+)
+
+
+# Check if the database file exists
+db_file_path = 'air.db'
+
+if not os.path.exists(db_file_path):
+    # Clean the data if database doesn't exist
+    file_cleaner.clean_all_files()
+    
+    # Instantiate DatabaseManager class
+    db_manager = DatabaseManager(db_file_path)
+    
+    # Load cleaned data into the database if database doesn't exist
+    db_manager.load_all_data()
+else:
+    print("Database already exists.")
+
 
 # Define table options
 table_options = ["AQIdata", "temperatures", "ozone", "co", "so2", "no2", "pm2.5", "pm10"]
