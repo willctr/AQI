@@ -342,26 +342,43 @@ class DatabaseManager:
 
         self.conn.commit()
 
-
     # Free resources
     def close_connection(self):
         self.conn.close()
         print("SQLite connection closed.")
 
+    def load_all_data(self):
+        # Create schema and load data
+        self.create_schema()
+        self.load_temperature_data()
+        self.load_aqi_data()
+        self.load_ozone_data()
+        self.load_pm25_data()
+        self.load_pm10_data()
+        self.load_no2_data()
+        self.load_so2_data()
+        self.load_co_data()
+
+        # Close connection
+        self.close_connection()
+
+
 if __name__ == '__main__':
     # Create an instance of DatabaseManager
     db_manager = DatabaseManager()
 
-    # Create schema and load data
-    db_manager.create_schema()
-    db_manager.load_temperature_data()
-    db_manager.load_aqi_data()
-    db_manager.load_ozone_data()
-    db_manager.load_pm25_data()
-    db_manager.load_pm10_data()
-    db_manager.load_no2_data()
-    db_manager.load_so2_data()
-    db_manager.load_co_data()
+    db_manager.load_all_data()
 
-    # Close connection
-    db_manager.close_connection()
+    # Create schema and load data
+    # db_manager.create_schema()
+    # db_manager.load_temperature_data()
+    # db_manager.load_aqi_data()
+    # db_manager.load_ozone_data()
+    # db_manager.load_pm25_data()
+    # db_manager.load_pm10_data()
+    # db_manager.load_no2_data()
+    # db_manager.load_so2_data()
+    # db_manager.load_co_data()
+
+    # # Close connection
+    # db_manager.close_connection()
